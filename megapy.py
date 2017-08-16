@@ -192,27 +192,27 @@ def parse_arguments():
                                      'MegaCLI commands more' +
                                      'user friendly and easier' +
                                      'to remember')
-    parser.add_argument('--enclosure',
+    parser.add_argument('-enclosure',
                         help='View the servers enclosure information',
                         dest='encl',
                         action='store_true')
-    parser.add_argument('--physical',
+    parser.add_argument('-physical',
                         help='View the servers physical drive information',
                         action='store_true',
                         dest='phys')
-    parser.add_argument('--vdrive',
+    parser.add_argument('-vdrive',
                         help='View the servers virtual drive information',
                         action='store_true',
                         dest='vdrive')
-    parser.add_argument('--controller',
+    parser.add_argument('-controller',
                         help='View the servers controller information',
                         action='store_true',
                         dest='control')
-    parser.add_argument('--alarmoff',
+    parser.add_argument('alarmoff',
                         help='Turn the alarm off',
                         action='store_true',
                         dest='alarmoff')
-    parser.add_argument('--alarmon',
+    parser.add_argument('alarmon',
                         action='store_true',
                         dest='alarmon')
     parser.add_argument('--basedir',

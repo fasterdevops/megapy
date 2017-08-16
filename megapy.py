@@ -22,7 +22,7 @@ class MegaCLI(object):
     >>> mega.view_enclosures()
     >>>
     '''
-
+    # pylint: disable=too-many-instance-attributes
     megadir = os.path.dirname(MEGACLI_INSTALLATION_PATH)
 
     def check_install(self):
@@ -208,15 +208,16 @@ def parse_arguments():
                         help='View the servers controller information',
                         action='store_true',
                         dest='control')
-    parser.add_argument('alarmoff',
+    parser.add_argument('-alarmoff',
                         help='Turn the alarm off',
                         action='store_true',
-                        dest='alarmoff')
-    parser.add_argument('alarmon',
+                        dest='off')
+    parser.add_argument('-alarmon',
+                        help='Turn the alarm off',
                         action='store_true',
-                        dest='alarmon')
-    parser.add_argument('--basedir',
-                        help='Specify the base directory where' +
+                        dest='on')
+    parser.add_argument('-basedir',
+                        help='Specify the base directory where ' +
                         'MegaCLI is installed.',
                         dest='basedir')
     args = parser.parse_args()
@@ -247,10 +248,10 @@ def main():
     if args.control:
         mega.view_physical_drives()
 
-    if args.alarmoff:
+    if args.off:
         mega.alarm_disable()
 
-    if args.alarmon:
+    if args.on:
         mega.alarm_enable()
 
 if __name__ == '__main__':

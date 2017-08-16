@@ -4,24 +4,26 @@ A python application to make the disk/raid management tool MegaCLI easier to use
 # MegaPy Usage
 
 ```
-
 MegaPy v.1
-usage: megapy.py [-h] [--enclosure ENCL] [--physical PHYS] [--vdrive VDRIVE]
-                 [--controller CONTROL]
+usage: megapy.py [-h] [-enclosure] [-physical] [-vdrive] [-controller]
+                 [-alarmoff] [-alarmon] [-basedir BASEDIR]
 
-A wrapper to make MegaCLI commands more user friendly and easier to remember
+A wrapper to make MegaCLI commands moreuser friendly and easierto remember
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --enclosure ENCL      View the servers enclosure information
-  --physical PHYS       View the servers physical drive information
-  --vdrive VDRIVE       View the servers virtual drive information
-  --controller CONTROL  View the servers controller information
-
+  -h, --help        show this help message and exit
+  -enclosure        View the servers enclosure information
+  -physical         View the servers physical drive information
+  -vdrive           View the servers virtual drive information
+  -controller       View the servers controller information
+  -alarmoff         Turn the alarm off
+  -alarmon          Turn the alarm off
+  -basedir BASEDIR  Specify the base directory where MegaCLI is installed.
 ```
+
 
 # Usage of MegaCLI class
 ```
 >>from megapy import MegaCLI
->> thing = MegaCLI()
+>> mega = MegaCLI()
 ```

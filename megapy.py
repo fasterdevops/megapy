@@ -99,6 +99,9 @@ class MegaCLI(object):
                                      'AlarmEnbl',
                                      '-aALL']
 
+        def __repr__(self):
+            return '<MegaPy MegaCLI object __repr__>'
+
     def view_enclosures(self):
         '''
         View the servers enclosure information

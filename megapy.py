@@ -1,13 +1,15 @@
 #!/usr/bin/python
 '''
 MegaPy - MegaCLI wrapper
+A wrapper to make MegaCLI commands more user friendly and easier to remember
 '''
 import os
 import subprocess
 import argparse
 
-__version__ = 'MegaPy v.1'
-__author__ = 'Riley - riley@fasterdevops.com'
+__version__ = '0.1.1'
+__author__ = 'Riley, Kolby'
+__author_email__ = 'riley@fasterdevops.com, kolby@fasterdevops.com'
 
 MEGACLI_INSTALLATION_PATH = "/opt/MegaRAID/"
 
@@ -18,35 +20,27 @@ class MegaCLI(object):
     Example Usage:
     >>> from megapy import MegaCLI
     >>> mega = MegaCLI()
-    >>> mega.check_install()
     >>> mega.view_enclosures()
     >>>
     '''
-    # pylint: disable=too-many-instance-attributes
-    megadir = os.path.dirname(MEGACLI_INSTALLATION_PATH)
 
     def check_install(self):
-        '''
-        Checks if MegaCLI is installed.
-        '''
-        # RedHat Command to install imh-megapkg
-        install_megacli = ['/usr/bin/yum',
-                           'install',
-                           'megacli',
-                           '-y']
-        # If MegaCLI is not installed, prompt user
-        # to see if they would like to install
+        '''Checks if MegaCLI is installed'''
+       
+        # If MegaCLI is not installed, prompt user to install
         if not os.path.exists(self.megadir):
             valid_input = False
             while not valid_input:
-                install = raw_input('MegaCLI does not exist on this' +
-                                    'server!\n' +
-                                    ' Would you like' +
-                                    'to install it now?(yes/no): ').lower()
-                if install in ('yes', 'y'):
-                    subprocess.Popen(install_megacli)
+                install = raw_input(
+                    'MegaCLI does not exist on this server.\n' +
+                    'Would you like to install it now? (yes/no)\n' +
+                    '> ').lower()
+                if 'y' in install:
+                    # RedHat command to install megapkg
+                    install_megacli = '/usr/bin/yum install megacli -y'
+                    subprocess.Popen(install_megacli.split(' '))
                     valid_input = True
-                if install in ('no', 'n'):
+                elif 'n' in install:
                     print('Closing....')
                     valid_input = True
 
@@ -55,76 +49,51 @@ class MegaCLI(object):
         define program installation directory and commands
         :param megacli_dir - The installation directory of MegaCLI
         '''
-        # If user supplies different installation path,
-        # use the installation path
-        if megacli_dir is not '':
+        
+        # set megacli_dir if provided
+        if megacli_dir:
+            # add trailing slash if not provided
+            if megacli_dir[-1:] ! = '/':
+                megacli_dir += '/'
             self.megadir = os.path.dirname(megacli_dir)
-        self.megaenc_command = ['MegaCli64',
-                                '-EncInfo',
-                                '-aALL']
-        self.megaphys_command = ['MegaCli64',
-                                 '-Pdlist',
-                                 '-aALL']
-        self.vdrive_command = ['MegaCli64',
-                               '-LDInfo',
-                               '-Lall',
-                               '-aLL']
-        self.battery_command = ['MegaCli64',
-                                '-AdpBbuCmd',
-                                '-aALL']
-        self.start_rebuild_drive_command = ['MegaCli64',
-                                            '-PDRbld',
-                                            '-Start',
-                                            '-PhysDrv',
-                                            '[E:S]',
-                                            '-aN']
-        self.stop_rebuild_drive_command = ['MegaCli64',
-                                           '-PDRbld',
-                                           '-Stop',
-                                           '-PhysDrv',
-                                           '[E:S]',
-                                           '-aN']
-        self.showprog_rebuild_drive_command = ['MegaCli64',
-                                               '-PDRbld',
-                                               '-ShowProg',
-                                               '-PhysDrv',
-                                               '[E:S]',
-                                               '-aN']
-        self.disable_alarm_command = ['MegaCli64',
-                                      '-AdpSetProp',
-                                      'AlarmDsbl',
-                                      '-aALL']
-        self.enable_alarm_command = ['MegaCli64',
-                                     '-AdpSetProp',
-                                     'AlarmEnbl',
-                                     '-aALL']
+        else:
+            self.megadir = os.path.dirname(MEGACLI_INSTALLATION_PATH)
+
+        self.check_install()
+        
+        self.command = {
+            'megaenc': 'MegaCli64 -EncInfo -aALL',
+            'megaphys': 'MegaCli64 -Pdlist -aALL',
+            'vdrive': 'MegaCli64 -LDInfo -Lall -aLL',
+            'battery': 'MegaCli64 -AdpBbuCmd -aALL',
+            'start_rebuild_drive': 'MegaCli64 -PDRbld -Start -PhysDrv [E:S] -aN',
+            'stop_rebuild_drive': 'MegaCli64 -PDRbld -Stop -PhysDrv [E:S] -aN',
+            'showprog_rebuild_drive': 'MegaCli64 -PDRbld -ShowProg -PhysDrv [E:S] -aN',
+            'disable_alarm': 'MegaCli64 -AdpSetProp AlarmDsbl -aALL',
+            'enable_alarm': 'MegaCli64 -AdpSetProp AlarmEnbl -aALL'}
+        
+        # add filepath to command
+        for key, value, in self.command.items():
+            self.command['key'] = (self.megadir + value).split(' ')
 
         def __repr__(self):
             return '<MegaPy MegaCLI object __repr__>'
 
     def view_enclosures(self):
-        '''
-        View the servers enclosure information
-        '''
-        subprocess.Popen(self.megadir, self.megaenc_command)
+        '''View the servers enclosure information'''
+        subprocess.Popen(self.command['megaenc'])
 
     def view_physical_drives(self):
-        '''
-        View the servers physical drive information
-        '''
-        subprocess.Popen(self.megadir, self.megaphys_command)
+        '''View the servers physical drive information'''
+        subprocess.Popen(self.command['megaphys'])
 
     def view_vdrive(self):
-        '''
-        View the servers virtual drive information
-        '''
-        subprocess.Popen(self.megadir, self.vdrive_command)
+        '''View the servers virtual drive information'''
+        subprocess.Popen(self.command['vdrive'])
 
     def battery_info(self):
-        '''
-        View battery information
-        '''
-        subprocess.Popen(self.megadir, self.battery_command)
+        '''View battery information'''
+        subprocess.Popen(self.command['battery'])
 
     def start_rebuild_drive(self, enclosure, slot):
         '''
@@ -132,9 +101,9 @@ class MegaCLI(object):
         :param enclosure - physical enclosure from view_enclosures()
         :param slot - slot of the enclosure
         '''
-        command = self.start_rebuild_drive_command
-        command[4] = '[' + enclosure + ',' + slot + ']'
-        subprocess.Popen(self.megadir, command)
+        command = self.command['start_rebuild_drive']
+        command[4] = '[' + enclosure + ':' + slot + ']'
+        subprocess.Popen(command)
 
     def stop_rebuild_drive(self, enclosure, slot):
         '''
@@ -142,9 +111,9 @@ class MegaCLI(object):
         :param enclosure - physical enclosure from view_enclosures()
         :param slot - slot of the enclosure
         '''
-        command = self.start_rebuild_drive_command
+        command = self.command['stop_rebuild_drive']
         command[4] = '[' + enclosure + ',' + slot + ']'
-        subprocess.Popen(self.megadir, command)
+        subprocess.Popen(command)
 
     def show_rebuild_drive(self, enclosure, slot):
         '''
@@ -152,9 +121,9 @@ class MegaCLI(object):
         :param enclosure - physical enclosure from view_enclosures()
         :param slot - slot of the enclosure
         '''
-        command = self.start_rebuild_drive_command
+        command = self.command['showprog_rebuild_drive']
         command[4] = '[' + enclosure + ',' + slot + ']'
-        subprocess.Popen(self.megadir, command)
+        subprocess.Popen(command)
 
     def rebuild_drive(self, enclosure, slot):
         '''
@@ -171,19 +140,15 @@ class MegaCLI(object):
         Set the base directory for MegaCLI
         :param megacli_dir - The installation directory of MegaCLI
         '''
-        self.megadir = os.path.dirname(megacli_dir)
+        self.__init__(megadir = os.path.dirname(megacli_dir))
 
     def alarm_disable(self):
-        '''
-        Disable the alarm
-        '''
-        subprocess.Popen(self.megadir, self.disable_alarm_command)
+        '''Disable the alarm'''
+        subprocess.Popen(self.command['disable_alarm_command'])
 
     def alarm_enable(self):
-        '''
-        Enable the alarm
-        '''
-        subprocess.Popen(self.megadir, self.enable_alarm_command)
+        '''Enable the alarm'''
+        subprocess.Popen(self.command['self.enable_alarm_command'])
 
 
 def parse_arguments():
@@ -191,10 +156,7 @@ def parse_arguments():
     Parsing user arguments. Use -h to see available commands.
     Had to add 'action='store_true' to arguments not expecting any input.
     '''
-    parser = argparse.ArgumentParser(description='A wrapper to make ' +
-                                     'MegaCLI commands more' +
-                                     'user friendly and easier' +
-                                     'to remember')
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-enclosure',
                         help='View the servers enclosure information',
                         dest='encl',
@@ -234,10 +196,10 @@ def main():
     '''
 
     # display version and parse arguments
-    print __version__
+    print('MegaPy ' + __version__)
+    
     # initialize MegaCLI object
     mega = MegaCLI()
-    mega.check_install()
     args = parse_arguments()
     if args.basedir:
         mega.set_basedir(args.basedir)

@@ -17,7 +17,7 @@ optional arguments:
   -vdrive           View the servers virtual drive information
   -controller       View the servers controller information
   -alarmoff         Turn the alarm off
-  -alarmon          Turn the alarm off
+  -alarmon          Turn the alarm on
   -basedir BASEDIR  Specify the base directory where MegaCLI is installed.
 ```
 
